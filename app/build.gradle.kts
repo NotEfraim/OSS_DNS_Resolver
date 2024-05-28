@@ -51,16 +51,6 @@ android {
         }
     }
 
-//    libraryVariants.all {variant ->
-//        variant.outputs.map { output ->
-//            val outputFile = output.outputFile
-//            if(output != null && outputFile.name.endsWith(".aar")){
-//                val fileName = "oss-resolver.aar"
-//                output.outputFile = File(outputFile.parent, fileName, )
-//            }
-//        }
-//    }
-
     libraryVariants.all {
         this.outputs.map { output ->
             val outputFile = output.outputFile
