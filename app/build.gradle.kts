@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+val aarVersion = "1.0"
+
 android {
     namespace = "com.estudio.oss_dns_resolver_v1"
     compileSdk = 34
@@ -46,6 +48,26 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+
+//    libraryVariants.all {variant ->
+//        variant.outputs.map { output ->
+//            val outputFile = output.outputFile
+//            if(output != null && outputFile.name.endsWith(".aar")){
+//                val fileName = "oss-resolver.aar"
+//                output.outputFile = File(outputFile.parent, fileName, )
+//            }
+//        }
+//    }
+
+    libraryVariants.all {
+        this.outputs.map { output ->
+            val outputFile = output.outputFile
+            if(output != null && outputFile.name.endsWith(".aar")) {
+                val fileName = "oss-resolver-${aarVersion}.aar"
+                outputFile.renameTo(File(outputFile.parent, fileName))
+            }
         }
     }
 }
