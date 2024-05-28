@@ -55,7 +55,7 @@ android {
         this.outputs.map { output ->
             val outputFile = output.outputFile
             if(output != null && outputFile.name.endsWith(".aar")) {
-                val fileName = "oss-resolver-${aarVersion}.aar"
+                val fileName = "oss-resolver.aar"
                 outputFile.renameTo(File(outputFile.parent, fileName))
             }
         }
