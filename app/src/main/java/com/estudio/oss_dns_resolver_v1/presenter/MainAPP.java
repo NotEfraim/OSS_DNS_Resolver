@@ -15,7 +15,6 @@ import com.estudio.oss_dns_resolver_v1.utils.KEventListener;
 
 public class MainAPP extends Application {
 
-
     /** Core Configuration */
     private static MainRepository repository;
     private static DNSResolver dnsResolver;

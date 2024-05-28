@@ -1,10 +1,10 @@
+import com.android.build.gradle.internal.api.BaseVariantOutputImpl
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.ksp)
 }
-
-val aarVersion = "1.0"
 
 android {
     namespace = "com.estudio.oss_dns_resolver_v1"
@@ -52,12 +52,11 @@ android {
     }
 
     libraryVariants.all {
-        this.outputs.map { output ->
-            val outputFile = output.outputFile
-            if(output != null && outputFile.name.endsWith(".aar")) {
-                val fileName = "oss-resolver.aar"
-                outputFile.renameTo(File(outputFile.parent, fileName))
-            }
+       val variant = this
+        variant.outputs
+            .map { it as BaseVariantOutputImpl }
+            .forEach { output ->
+            output.outputFileName = "oss_dns_resolver.aar"
         }
     }
 }
