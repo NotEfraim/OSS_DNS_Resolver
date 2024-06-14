@@ -1,5 +1,4 @@
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
-import groovy.util.Node
 
 buildscript {
     repositories {
@@ -127,7 +126,7 @@ publishing {
 
             groupId = "com.github.NotEfraim"
             artifactId = "OSS_DNS_Resolver"
-            version = "2.0"
+            version = "1.1"
 
             pom {
                 name = "OSS DNS Resolver"
@@ -147,15 +146,6 @@ publishing {
                         email = "efraimcanilang@gmail.com"
                     }
                 }
-
-                withXml {
-                    asNode().appendNode("dependencies").apply {
-                        // Add dependencies
-                        appendDependency("com.squareup.retrofit2", "retrofit", "2.11.0")
-                        appendDependency("com.squareup.retrofit2", "converter-gson", "2.11.0")
-                        appendDependency("com.squareup.retrofit2", "adapter-rxjava3", "2.11.0")
-                    }
-                }
             }
         }
 
@@ -163,14 +153,5 @@ publishing {
             mavenLocal()
         }
 
-    }
-}
-
-fun Node.appendDependency(groupId: String, artifactId: String, version: String) {
-    appendNode("dependency").apply {
-        appendNode("groupId", groupId)
-        appendNode("artifactId", artifactId)
-        appendNode("version", version)
-        appendNode("scope", "compile")
     }
 }
