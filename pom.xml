@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.NotEfraim</groupId>
   <artifactId>OSS_DNS_Resolver</artifactId>
-  <version>1.7</version>
+  <version>1.8</version>
   <packaging>pom</packaging>
   <description>OSS DNS Resolver</description>
 

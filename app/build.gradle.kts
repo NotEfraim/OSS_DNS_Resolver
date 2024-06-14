@@ -123,30 +123,29 @@ dependencies {
 publishing {
     publications {
         create<MavenPublication>("maven") {
-
             groupId = "com.github.NotEfraim"
             artifactId = "OSS_DNS_Resolver"
-            version = "1.7"
-
-            pom {
-                name = "OSS DNS Resolver"
-                description = "Developed by Efraim"
-                url = "https://github.com/NotEfraim/OSS_DNS_Resolver"
-
-                licenses {
-                    license {
-                        name = "The Apache License, Version 2.0"
-                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
-                    }
-                }
-                developers {
-                    developer {
-                        id = "Efraim"
-                        name = "John Efraim Canilang"
-                        email = "efraimcanilang@gmail.com"
-                    }
-                }
-            }
+            version = "1.8"
+//
+//            pom {
+//                name = "OSS DNS Resolver"
+//                description = "Developed by Efraim"
+//                url = "https://github.com/NotEfraim/OSS_DNS_Resolver"
+//
+//                licenses {
+//                    license {
+//                        name = "The Apache License, Version 2.0"
+//                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+//                    }
+//                }
+//                developers {
+//                    developer {
+//                        id = "Efraim"
+//                        name = "John Efraim Canilang"
+//                        email = "efraimcanilang@gmail.com"
+//                    }
+//                }
+//            }
         }
 
         repositories {
