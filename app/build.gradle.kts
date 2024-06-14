@@ -126,7 +126,7 @@ publishing {
 
             groupId = "com.github.NotEfraim"
             artifactId = "OSS_DNS_Resolver"
-            version = "1.2"
+            version = "1.3"
 
             pom {
                 name = "OSS DNS Resolver"
