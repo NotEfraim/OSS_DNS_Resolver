@@ -1,9 +1,20 @@
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
+import groovy.util.Node
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        mavenLocal()
+    }
+}
+
 
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.ksp)
+    id("maven-publish")
 }
 
 android {
@@ -12,7 +23,7 @@ android {
 
     defaultConfig {
 //        applicationId = "com.estudio.oss_dns_resolver_v1"
-//        minSdk = 24
+        minSdk = 24
 //        targetSdk = 34
 //        versionCode = 1
 //        versionName = "1.0"
@@ -32,6 +43,13 @@ android {
             )
         }
     }
+
+//    java {
+//        toolchain {
+//            languageVersion = JavaLanguageVersion.of(18)
+//        }
+//    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -52,13 +70,14 @@ android {
     }
 
     libraryVariants.all {
-       val variant = this
+        val variant = this
         variant.outputs
             .map { it as BaseVariantOutputImpl }
             .forEach { output ->
-            output.outputFileName = "oss_dns_resolver.aar"
-        }
+                output.outputFileName = "oss_dns_resolver.aar"
+            }
     }
+
 }
 
 dependencies {
@@ -100,6 +119,58 @@ dependencies {
         exclude(group = "com.android.support")
         exclude(group = "com.google.code.gson")
     }
+}
 
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
 
+            groupId = "com.github.NotEfraim"
+            artifactId = "OSS_DNS_Resolver"
+            version = "2.0"
+
+            pom {
+                name = "OSS DNS Resolver"
+                description = "Developed by Efraim"
+                url = "https://github.com/NotEfraim/OSS_DNS_Resolver"
+
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "Efraim"
+                        name = "John Efraim Canilang"
+                        email = "efraimcanilang@gmail.com"
+                    }
+                }
+
+                withXml {
+                    asNode().appendNode("dependencies").apply {
+                        // Add dependencies
+                        appendDependency("com.squareup.retrofit2", "retrofit", "2.11.0")
+                        appendDependency("com.squareup.retrofit2", "converter-gson", "2.11.0")
+                        appendDependency("com.squareup.retrofit2", "adapter-rxjava3", "2.11.0")
+                    }
+                }
+            }
+        }
+
+        repositories {
+            mavenLocal()
+        }
+
+    }
+}
+
+fun Node.appendDependency(groupId: String, artifactId: String, version: String) {
+    appendNode("dependency").apply {
+        appendNode("groupId", groupId)
+        appendNode("artifactId", artifactId)
+        appendNode("version", version)
+        appendNode("scope", "compile")
+    }
 }
