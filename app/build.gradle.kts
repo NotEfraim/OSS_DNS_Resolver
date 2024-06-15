@@ -125,7 +125,7 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "com.github.NotEfraim"
             artifactId = "OSS_DNS_Resolver"
-            version = "1.13"
+            version = "1.14"
 
             pom {
                 name.set("OSS DNS Resolver")
@@ -164,10 +164,10 @@ publishing {
                 }
 
                 // Add dependencies from the 'api' and 'implementation' configurations
-                addDependencies("api", "compile")
-                addDependencies("implementation", "runtime")
+                addDependencies("implementation", "compile")
                 // Add other configurations if needed
                 // addDependencies("compileOnly", "provided")
+//                addDependencies("api", "compile")
             }
         }
     }
