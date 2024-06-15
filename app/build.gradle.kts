@@ -125,7 +125,7 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "com.github.NotEfraim"
             artifactId = "OSS_DNS_Resolver"
-            version = "1.11"
+            version = "1.12"
 
             pom {
                 name.set("OSS DNS Resolver")
