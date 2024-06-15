@@ -125,28 +125,27 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "com.github.NotEfraim"
             artifactId = "OSS_DNS_Resolver"
-            version = "1.9"
+            version = "1.11"
 
             pom {
-                name = "OSS DNS Resolver"
-                description = "Developed by Efraim"
-                url = "https://github.com/NotEfraim/OSS_DNS_Resolver"
+                name.set("OSS DNS Resolver")
+                description.set("Developed by Efraim")
+                url.set("https://github.com/NotEfraim/OSS_DNS_Resolver")
 
                 licenses {
                     license {
-                        name = "The Apache License, Version 2.0"
-                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                        name.set("The Apache License, Version 2.0")
+                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
                     }
                 }
                 developers {
                     developer {
-                        id = "Efraim"
-                        name = "John Efraim Canilang"
-                        email = "efraimcanilang@gmail.com"
+                        id.set("Efraim")
+                        name.set("John Efraim Canilang")
+                        email.set("efraimcanilang@gmail.com")
                     }
                 }
             }
-
 
             pom.withXml {
                 val dependenciesNode = asNode().appendNode("dependencies")
@@ -170,13 +169,18 @@ publishing {
                 // Add other configurations if needed
                 // addDependencies("compileOnly", "provided")
             }
-
-
         }
+    }
 
-        repositories {
-            mavenLocal()
-        }
-
+    repositories {
+        mavenLocal()
+        // Add other repositories if needed
+         maven {
+             url = uri("https://github.com/NotEfraim/OSS_DNS_Resolver")
+             credentials {
+                 username = project.findProperty("repoUser") as String? ?: ""
+                 password = project.findProperty("repoPassword") as String? ?: ""
+             }
+         }
     }
 }
