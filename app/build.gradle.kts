@@ -43,11 +43,11 @@ android {
         }
     }
 
-//    java {
-//        toolchain {
-//            languageVersion = JavaLanguageVersion.of(18)
-//        }
-//    }
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(18)
+        }
+    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -125,27 +125,27 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "com.github.NotEfraim"
             artifactId = "OSS_DNS_Resolver"
-            version = "1.8"
-//
-//            pom {
-//                name = "OSS DNS Resolver"
-//                description = "Developed by Efraim"
-//                url = "https://github.com/NotEfraim/OSS_DNS_Resolver"
-//
-//                licenses {
-//                    license {
-//                        name = "The Apache License, Version 2.0"
-//                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
-//                    }
-//                }
-//                developers {
-//                    developer {
-//                        id = "Efraim"
-//                        name = "John Efraim Canilang"
-//                        email = "efraimcanilang@gmail.com"
-//                    }
-//                }
-//            }
+            version = "1.9"
+
+            pom {
+                name = "OSS DNS Resolver"
+                description = "Developed by Efraim"
+                url = "https://github.com/NotEfraim/OSS_DNS_Resolver"
+
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "Efraim"
+                        name = "John Efraim Canilang"
+                        email = "efraimcanilang@gmail.com"
+                    }
+                }
+            }
         }
 
         repositories {
