@@ -146,6 +146,32 @@ publishing {
                     }
                 }
             }
+
+
+            pom.withXml {
+                val dependenciesNode = asNode().appendNode("dependencies")
+
+                // Function to add dependencies from a configuration
+                fun addDependencies(configurationName: String, scope: String) {
+                    configurations[configurationName].allDependencies.forEach {
+                        if (it.group != null && it.version != null) {
+                            val dependencyNode = dependenciesNode.appendNode("dependency")
+                            dependencyNode.appendNode("groupId", it.group)
+                            dependencyNode.appendNode("artifactId", it.name)
+                            dependencyNode.appendNode("version", it.version)
+                            dependencyNode.appendNode("scope", scope)
+                        }
+                    }
+                }
+
+                // Add dependencies from the 'api' and 'implementation' configurations
+                addDependencies("api", "compile")
+                addDependencies("implementation", "runtime")
+                // Add other configurations if needed
+                // addDependencies("compileOnly", "provided")
+            }
+
+
         }
 
         repositories {
