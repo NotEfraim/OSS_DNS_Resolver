@@ -123,9 +123,14 @@ dependencies {
 publishing {
     publications {
         create<MavenPublication>("maven") {
+
+            afterEvaluate {
+                from(components["release"])
+            }
+
             groupId = "com.github.NotEfraim"
             artifactId = "OSS_DNS_Resolver"
-            version = "1.14"
+            version = "1.15"
 
             pom {
                 name.set("OSS DNS Resolver")
