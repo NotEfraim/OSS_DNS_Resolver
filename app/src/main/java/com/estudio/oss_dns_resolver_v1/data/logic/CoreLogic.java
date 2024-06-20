@@ -5,6 +5,7 @@ import android.util.Log;
 
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.estudio.oss_dns_resolver_v1.data.logic.default_url.BasicDefaultURL;
 import com.estudio.oss_dns_resolver_v1.data.logic.default_url.EncryptedDefaultURL;
@@ -29,8 +30,8 @@ public class CoreLogic {
 
     /** Commons */
     private LifecycleOwner lifecycleOwner;
-    private List<String> ossList = Collections.emptyList();
-    private List<String> yumingList = Collections.emptyList();
+    private static List<String> ossList = Collections.emptyList();
+    private static List<String> yumingList = Collections.emptyList();
     private String defaultUrl = "";
     private static SharedPreferences sharedPreferences;
     private static CoreLogic instance;
@@ -53,6 +54,8 @@ public class CoreLogic {
     private static LiveData<YumingResponse> liveDataBasicYuming;
     private static LiveData<YumingResponse> liveDataEncryptedDefaultURL;
     private static LiveData<YumingResponse> liveDataBasicDefaultURL;
+    private static final MutableLiveData<Integer> _liveDataProgress = new MutableLiveData<>(0);
+    private static final LiveData<Integer> liveDataProgress = _liveDataProgress;
 
     private CoreLogic(){
 
@@ -93,10 +96,10 @@ public class CoreLogic {
 
     /* Configuration */
     public void setConfiguration(KConfiguration configuration) {
-        this.ossList = configuration.getOssList();
-        this.yumingList = configuration.getYumingList();
         this.defaultUrl = configuration.getDefaultUrl();
         this.lifecycleOwner = configuration.getLifecycleOwner();
+        ossList = configuration.getOssList();
+        yumingList = configuration.getYumingList();
         kEventListener = configuration.getKEventListener();
 
         /* Set DNS Key and ID */
@@ -107,20 +110,12 @@ public class CoreLogic {
         sharePrefManager.SET_AGENT(configuration.getAgent());
         sharePrefManager.SET_VERSION(configuration.getVersion());
     }
-    public void setOssList(List<String> ossList){
-        this.ossList = ossList;
-    }
-
-    public void setYumingList(List<String> yumingList){
-        this.yumingList = yumingList;
-    }
-
-    public void setDefaultUrl(String url){
-        this.defaultUrl = url;
-    }
 
     public void initLogic() {
         USE_ENCRYPTED_OSS();
+
+        /* Start to observe the progress */
+        observeProgress();
     }
 
     private void USE_ENCRYPTED_OSS(){
@@ -260,5 +255,20 @@ public class CoreLogic {
                 kEventListener.onAllFailed();
             }
         });
+    }
+
+    private void observeProgress(){
+        liveDataProgress.observe(lifecycleOwner, progress -> {
+            if(progress == 0) return;
+            kEventListener.onProgressChanged(progress);
+        });
+    }
+
+    public static void updateProgress(int progress){
+        _liveDataProgress.postValue(progress);
+    }
+
+    public static int currentProgress() {
+        return liveDataProgress.getValue() != null ? liveDataProgress.getValue() : 0;
     }
 }

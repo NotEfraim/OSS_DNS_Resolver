@@ -53,6 +53,10 @@ public class MainAPP extends Application {
         return sharePrefManager.GET_RESOLVED_OSS();
     }
 
+    public static String getHeaderHost() {
+        return sharePrefManager.GET_HEADER_HOST();
+    }
+
     public static void setConfiguration(KConfiguration configuration) {
         repository.setConfiguration(configuration);
     }

@@ -86,6 +86,12 @@ public class BasicYuming {
                 /* Save Success Yuming */
                 sharePrefManager.SET_RESOLVED_YUMING(current_url);
 
+                /* Reset Header Host */
+                sharePrefManager.SET_HEADER_HOST("");
+
+                /* Update Progress */
+                CoreLogic.updateProgress(120);
+
                 Log.d(TAG, "==== YUMING CALL Success! ==== \nResponse:" + new Gson().toJson(response));
                 InitActModel initActModel = new Gson().fromJson(response, InitActModel.class);
                 yumingResponse.setFinalUrl(current_url);
@@ -103,6 +109,10 @@ public class BasicYuming {
                 PHASE_1_COUNTER++;
                 /* Recursive call */
                 Phase1_TEST_YUMING();
+                /* Update Progress */
+                int currentProgress = CoreLogic.currentProgress();
+                int progress = (currentProgress + (100 / (yumingList.size() * 2) ) );
+                CoreLogic.updateProgress(progress);
 
             }
         });

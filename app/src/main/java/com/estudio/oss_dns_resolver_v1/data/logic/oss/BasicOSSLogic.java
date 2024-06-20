@@ -92,6 +92,12 @@ public class BasicOSSLogic {
                     /* Save Success OSS */
                     sharePrefManager.SET_RESOLVED_OSS(current_oss_url);
 
+                    /* Reset Header Host */
+                    sharePrefManager.SET_HEADER_HOST("");
+
+                    /* Update Progress */
+                    CoreLogic.updateProgress(50);
+
                     String responseData = RSAUtil.decryptNew(response, RSAUtil.getPrivateKey(Constants.privateKey));
                     InitModel model = new Gson().fromJson(responseData, InitModel.class);
                     ossResponse.setSuccess(true);
@@ -117,6 +123,10 @@ public class BasicOSSLogic {
                 PHASE_1_COUNTER++;
                 /* Recursive call */
                 Phase1_OSS_RAW_CALL();
+                /* Update Progress */
+                int currentProgress = CoreLogic.currentProgress();
+                int progress = (currentProgress + (50 / (ossList.size() * 2) ) );
+                CoreLogic.updateProgress(progress);
             }
         });
 

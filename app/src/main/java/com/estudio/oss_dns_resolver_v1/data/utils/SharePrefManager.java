@@ -38,6 +38,9 @@ public class SharePrefManager {
     public String GET_RESOLVED_OSS(){
         return sharedPreferences.getString(Constants.OSS_KEY, "");
     }
+    public String GET_HEADER_HOST(){
+        return sharedPreferences.getString(Constants.HEADER_HOST_KEY, "");
+    }
 
     public void SET_DNS_ID(String value){
         sharedPreferences.edit().putString(Constants.DNS_ID_KEY, value).apply();
@@ -59,6 +62,9 @@ public class SharePrefManager {
     }
     public void SET_RESOLVED_OSS(String value){
         sharedPreferences.edit().putString(Constants.OSS_KEY, value).apply();
+    }
+    public void SET_HEADER_HOST(String value){
+        sharedPreferences.edit().putString(Constants.HEADER_HOST_KEY, value).apply();
     }
 
 }

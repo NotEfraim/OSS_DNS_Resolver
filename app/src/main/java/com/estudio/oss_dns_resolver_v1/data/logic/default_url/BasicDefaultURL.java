@@ -64,6 +64,12 @@ public class BasicDefaultURL {
                 /* Save Success Yuming */
                 sharePrefManager.SET_RESOLVED_YUMING(defaultURL);
 
+                /* Reset Header Host */
+                sharePrefManager.SET_HEADER_HOST("");
+
+                /* Update Progress */
+                CoreLogic.updateProgress(120);
+
                 Log.d(TAG, " ==== YUMING CALL Success! ==== \nResponse:" + new Gson().toJson(response));
                 InitActModel initActModel = new Gson().fromJson(response, InitActModel.class);
                 yumingResponse.setSuccess(true);
@@ -76,6 +82,8 @@ public class BasicDefaultURL {
                 Log.d(TAG, " ==== YUMING CALL ERROR ! ==== \nResponse:" + error);
                 /* return fail and null */
                 _response.postValue(yumingResponse);
+                /* Update Progress */
+                CoreLogic.updateProgress(90);
             }
         });
 

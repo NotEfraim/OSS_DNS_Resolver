@@ -22,7 +22,7 @@ android {
 
     defaultConfig {
 //        applicationId = "com.estudio.oss_dns_resolver_v1"
-        minSdk = 24
+        minSdk = 21
 //        targetSdk = 34
 //        versionCode = 1
 //        versionName = "1.0"

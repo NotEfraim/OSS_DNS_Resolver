@@ -15,6 +15,7 @@ import com.estudio.oss_dns_resolver_v1.model.YumingResponse;
 import com.estudio.oss_dns_resolver_v1.no_di.network.HttpService;
 import com.estudio.oss_dns_resolver_v1.no_di.network.HttpServiceBuilder;
 import com.estudio.oss_dns_resolver_v1.no_di.network.ServiceCallBack;
+import com.estudio.oss_dns_resolver_v1.utils.Utils;
 import com.google.gson.Gson;
 
 public class EncryptedDefaultURL {
@@ -84,12 +85,22 @@ public class EncryptedDefaultURL {
 
     private void Phase2_TEST_YUMING(String encryptionResult) {
 
+        StringBuilder hostHeader = new StringBuilder();
+        hostHeader.append(Utils.getURLHost(defaultURL));
+        int port = Utils.getURLPort(defaultURL);
+
+        if(port != 80) {
+            hostHeader.append(":");
+            hostHeader.append(port);
+        }
+
         HttpServiceBuilder builder = new HttpServiceBuilder.Builder()
                 .setURL(encryptionResult)
                 .setMethod("POST")
                 .addHeader("dev", "2")
                 .addHeader("agent", sharePrefManager.GET_AGENT())
                 .addHeader("version", sharePrefManager.GET_VERSION())
+                .addHeader("host", hostHeader.toString())
                 .build();
 
         new HttpService(builder, new ServiceCallBack() {
@@ -97,6 +108,12 @@ public class EncryptedDefaultURL {
             public void onResponse(String response) {
                 /* Save Success Yuming */
                 sharePrefManager.SET_RESOLVED_YUMING(encryptionResult);
+
+                /* Save Header Host */
+                sharePrefManager.SET_HEADER_HOST(hostHeader.toString());
+
+                /* Update Progress */
+                CoreLogic.updateProgress(120);
 
                 Log.d(TAG, "==== Default URL CALL Success! ==== \nResponse:" + new Gson().toJson(response));
                 InitActModel initActModel = new Gson().fromJson(response, InitActModel.class);
@@ -110,6 +127,8 @@ public class EncryptedDefaultURL {
                 Log.d(TAG, "====Default URL CALL ERROR ! ==== \nResponse:" + error);
                 /* return fail and null */
                 _response.postValue(yumingResponse);
+                /* Update Progress */
+                CoreLogic.updateProgress(90);
             }
         });
 
