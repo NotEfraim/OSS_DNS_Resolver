@@ -9,15 +9,12 @@ import androidx.lifecycle.MutableLiveData;
 import com.estudio.oss_dns_resolver_v1.data.logic.CoreLogic;
 import com.estudio.oss_dns_resolver_v1.data.logic.dns.DNSResolver;
 import com.estudio.oss_dns_resolver_v1.data.logic.dns.DnsCallback;
-import com.estudio.oss_dns_resolver_v1.data.utils.Process_Enum;
 import com.estudio.oss_dns_resolver_v1.data.utils.SharePrefManager;
 import com.estudio.oss_dns_resolver_v1.model.InitActModel;
 import com.estudio.oss_dns_resolver_v1.model.YumingResponse;
 import com.estudio.oss_dns_resolver_v1.no_di.network.HttpService;
 import com.estudio.oss_dns_resolver_v1.no_di.network.HttpServiceBuilder;
 import com.estudio.oss_dns_resolver_v1.no_di.network.ServiceCallBack;
-import com.estudio.oss_dns_resolver_v1.utils.Constants;
-import com.estudio.oss_dns_resolver_v1.utils.Utils;
 import com.google.gson.Gson;
 
 public class EncryptedDefaultURL {

@@ -6,7 +6,6 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 
 import com.estudio.oss_dns_resolver_v1.data.logic.CoreLogic;
-import com.estudio.oss_dns_resolver_v1.data.utils.Process_Enum;
 import com.estudio.oss_dns_resolver_v1.data.utils.SharePrefManager;
 import com.estudio.oss_dns_resolver_v1.model.InitModel;
 import com.estudio.oss_dns_resolver_v1.model.OSSResponse;
