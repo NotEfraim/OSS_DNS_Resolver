@@ -1,12 +1,10 @@
 package com.estudio.oss_dns_resolver_v1.model;
 
-import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
 public class InitActModel extends BaseModel implements Serializable {
 
-    @SerializedName("data")
     private InitActInfo data = new InitActInfo();
     public InitActInfo getData() {
         return data;
@@ -28,45 +26,25 @@ public class InitActModel extends BaseModel implements Serializable {
      * update_text (string, optional): 更新内容
      */
     public class InitActInfo {
-        @SerializedName("customer_url")
         private String customer_url;
-        @SerializedName("customer_url2")
         private String customer_url2;
-        @SerializedName("down_url")
         private String down_url;
-        @SerializedName("web_url")
         private String web_url;
-        @SerializedName("has_new")
         private boolean has_new;
-        @SerializedName("latest_fore")
         private String latest_fore;
-        @SerializedName("latest_version")
         private String latest_version;
-        @SerializedName("live_config")
         private LiveConfig live_config=new LiveConfig();
-        @SerializedName("idle")
         private int idle;
-        @SerializedName("login_verif_url")
         private String login_verif_url;
-        @SerializedName("update_text")
         private String update_text;
-        @SerializedName("captchaId")
         private String captchaId;
-        @SerializedName("action_switch")
         private String action_switch;
-        @SerializedName("action_sms_switch")
         private Boolean action_sms_switch;
-        @SerializedName("product_id")
         private String product_id;
-        @SerializedName("defaultUrl")
         private String defaultUrl;
-        @SerializedName("defaultOss")
         private String defaultOss;
-        @SerializedName("defaultCustUrl")
         private String defaultCustUrl;
-        @SerializedName("dnsId")
         private String dnsId;
-        @SerializedName("dnsKey")
         private String dnsKey;
 
         public String getCustomer_url2() {
@@ -240,28 +218,17 @@ public class InitActModel extends BaseModel implements Serializable {
      * send_msg_lv (integer, optional): 发言等级限制 ,
      * tim_sdkappid (string, optional): IM腾讯ID
      */
-    public class LiveConfig {
-        @SerializedName("jr_user_level")
+    public class LiveConfig implements Serializable{
         private int jr_user_level;
-        @SerializedName("on_line_group_id")
         private String on_line_group_id;
-        @SerializedName("gen_tou_url")
         private String gen_tou_url;
-        @SerializedName("send_msg_lv")
         private int send_msg_lv;
-        @SerializedName("livePayPreview")
         private int livePayPreview;
-        @SerializedName("tim_sdkappid")
         private String tim_sdkappid;
-        @SerializedName("heCai6")
         private LiuHeCaiModel heCai6=new LiuHeCaiModel();
-        @SerializedName("danmu_fee")
         private double danmu_fee;
-        @SerializedName("diamond_name")
         private String diamond_name;
-        @SerializedName("identifier")
         private String identifier;
-        @SerializedName("wheel_pool_group_id")
         private String wheel_pool_group_id;
 
         public int getJr_user_level() {

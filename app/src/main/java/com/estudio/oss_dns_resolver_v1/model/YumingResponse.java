@@ -1,13 +1,9 @@
 package com.estudio.oss_dns_resolver_v1.model;
 
-import com.google.gson.annotations.SerializedName;
 
 public class YumingResponse {
-    @SerializedName("isSuccess")
     private boolean isSuccess;
-    @SerializedName("finalUrl")
     private String finalUrl;
-    @SerializedName("data")
     private InitActModel data;
 
     public String getFinalUrl() {

@@ -1,11 +1,10 @@
 package com.estudio.oss_dns_resolver_v1.model;
 
-import com.google.gson.annotations.SerializedName;
 
-public class OSSResponse {
-    @SerializedName("isSuccess")
+import java.io.Serializable;
+
+public class OSSResponse implements Serializable {
     private boolean isSuccess;
-    @SerializedName("data")
     private InitModel data;
 
     public void setSuccess(boolean success) {

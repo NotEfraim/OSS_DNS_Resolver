@@ -1,46 +1,63 @@
 package com.estudio.oss_dns_resolver_v1.utils;
 
-import okhttp3.HttpUrl;
+import android.util.Base64;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
 
 public class Utils {
 
     public static String getURLScheme(String url){
-        HttpUrl httpUrl = HttpUrl.parse(url);
-        if(httpUrl != null){
-            return httpUrl.scheme();
-        }
+        if(url.contains("https")) return "https";
+        else if(url.contains("http")) return "http";
         return "";
     }
 
     public static int getURLPort(String url){
-        HttpUrl httpUrl = HttpUrl.parse(url);
-        if(httpUrl != null){
-            return httpUrl.port();
-        }
+
+        try {
+
+            String relURL = getURLHost(url);
+            String toSplitURL = url.split(relURL)[1];
+
+            if(toSplitURL.contains(":")){
+                String[] split = toSplitURL.split("/");
+                return Integer.parseInt(split[0].substring(1));
+            }
+
+        }catch (Exception ignored){}
+
+
         return 80;
     }
 
-    public static String getURLHost(String url){
-        HttpUrl httpUrl = HttpUrl.parse(url);
-        if(httpUrl != null){
-            return httpUrl.host();
+    public static String getURLHost(String strURL){
+        String host = null;
+        try {
+            URL url = new URL(strURL);
+            host = url.getHost();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
         }
-        return "";
+        return host;
     }
 
     public static String replaceURLHost(String url, String newHost){
 
-        HttpUrl oldHttpUrl = HttpUrl.parse(url);
+        String oldHttpUrl = getURLHost(url);
 
-        if(oldHttpUrl == null)
-            return "";
+        if(oldHttpUrl == null) return "";
 
-        HttpUrl newHttpUrl = oldHttpUrl.newBuilder()
-                .host(newHost)
-                .scheme(oldHttpUrl.scheme())
-                .port(oldHttpUrl.port())
-                .build();
+        String scheme = getURLScheme(url);
 
-        return String.valueOf(newHttpUrl.url());
+        String[] split = url.split(oldHttpUrl);
+
+        System.out.println(Arrays.toString(split));
+
+        return scheme +
+                "://" +
+                newHost +
+                split[1];
     }
 }

@@ -7,29 +7,23 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.estudio.oss_dns_resolver_v1.data.logic.CoreLogic;
-import com.estudio.oss_dns_resolver_v1.data.utils.ApiRawCall;
-import com.estudio.oss_dns_resolver_v1.data.utils.BaseApiObserver;
-import com.estudio.oss_dns_resolver_v1.data.utils.Process_Enum;
+import com.estudio.oss_dns_resolver_v1.data.utils.SharePrefManager;
 import com.estudio.oss_dns_resolver_v1.model.InitActModel;
 import com.estudio.oss_dns_resolver_v1.model.YumingResponse;
+import com.estudio.oss_dns_resolver_v1.no_di.network.HttpService;
+import com.estudio.oss_dns_resolver_v1.no_di.network.HttpServiceBuilder;
+import com.estudio.oss_dns_resolver_v1.no_di.network.ServiceCallBack;
 import com.estudio.oss_dns_resolver_v1.utils.Constants;
 import com.google.gson.Gson;
 
-import java.net.HttpURLConnection;
 import java.util.Collections;
 import java.util.List;
-
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class BasicYuming {
 
     private static final String TAG = CoreLogic.TAG;
-    private static ApiRawCall apiRawCall;
-    private static SharedPreferences sharedPreferences;
+    private static SharePrefManager sharePrefManager;
     private static BasicYuming instance;
-
-    Gson gson = new Gson();
     private List<String> yumingList = Collections.emptyList();
     private static int LIST_SIZE = 0;
     private String current_url = "";
@@ -43,12 +37,8 @@ public class BasicYuming {
 
     private BasicYuming() {}
 
-    public static BasicYuming getInstance(
-            ApiRawCall rawCall,
-            SharedPreferences preferences
-    ){
-        apiRawCall = rawCall;
-        sharedPreferences = preferences;
+    public static BasicYuming getInstance(SharedPreferences preferences){
+        sharePrefManager = new SharePrefManager(preferences);
 
         if(instance == null){
             instance = new BasicYuming();
@@ -64,12 +54,6 @@ public class BasicYuming {
 
         PHASE_1_COUNTER = 0;
         LIST_SIZE = yumingList.size();
-
-        /* Set Status */
-        sharedPreferences.edit().putString(Constants.PROCESS_KEY, Process_Enum.YUMING_PROCESS.name()).apply();
-
-        /* Reset DNS Header */
-        sharedPreferences.edit().putString(Constants.OSS_HEADER_HOST, "").apply();
 
         /* Phase 1 Start */
         Phase1_TEST_YUMING();
@@ -88,47 +72,40 @@ public class BasicYuming {
         /* Set the current oss url */
         current_url = yumingList.get(PHASE_1_COUNTER);
 
-        /* Add BASE URL */
-        sharedPreferences.edit().putString(Constants.BASE_URL_KEY, current_url).apply();
+        HttpServiceBuilder builder = new HttpServiceBuilder.Builder()
+                .setURL(current_url+"/platform-ns/v1.0/init")
+                .setMethod("POST")
+                .addHeader("dev", "2")
+                .addHeader("agent", sharePrefManager.GET_AGENT())
+                .addHeader("version", sharePrefManager.GET_VERSION())
+                .build();
 
-        apiRawCall.initAct(current_url)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new BaseApiObserver<InitActModel>() {
+        new HttpService(builder, new ServiceCallBack() {
+            @Override
+            public void onResponse(String response) {
+                /* Save Success Yuming */
+                sharePrefManager.SET_RESOLVED_YUMING(current_url);
 
-                    @Override
-                    public void onNext(InitActModel initActModel) {
+                Log.d(TAG, "==== YUMING CALL Success! ==== \nResponse:" + new Gson().toJson(response));
+                InitActModel initActModel = new Gson().fromJson(response, InitActModel.class);
+                yumingResponse.setFinalUrl(current_url);
+                yumingResponse.setSuccess(true);
+                yumingResponse.setData(initActModel);
+                _response.postValue(yumingResponse);
+                /* Exit the recursion */
+                PHASE_1_COUNTER = LIST_SIZE;
+            }
 
-                        Log.d(TAG, "==== YUMING CALL Success! ==== \nResponse:" + gson.toJson(initActModel));
+            @Override
+            public void onFailure(String error) {
+                Log.d(TAG, "==== YUMING CALL ERROR ! ==== \nResponse:" + error);
+                /* Increase the counter */
+                PHASE_1_COUNTER++;
+                /* Recursive call */
+                Phase1_TEST_YUMING();
 
-                        if(initActModel.getCode() == HttpURLConnection.HTTP_OK || initActModel.getCode() == 0) {
-                            yumingResponse.setFinalUrl(current_url);
-                            yumingResponse.setSuccess(true);
-                            yumingResponse.setData(initActModel);
-                            _response.postValue(yumingResponse);
-                            /* Exit the recursion */
-                            PHASE_1_COUNTER = LIST_SIZE;
-                        } else {
-                            /* Increase the counter */
-                            PHASE_1_COUNTER++;
-                            /* Recursive call */
-                            Phase1_TEST_YUMING();
-                        }
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.d(TAG, "==== YUMING CALL ERROR ! ==== \nResponse:" + e.getLocalizedMessage());
-                        /* Increase the counter */
-                        PHASE_1_COUNTER++;
-                        /* Recursive call */
-                        Phase1_TEST_YUMING();
-                    }
-
-                });
-
-
+            }
+        });
     }
 
 }

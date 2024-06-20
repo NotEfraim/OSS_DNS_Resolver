@@ -1,33 +1,24 @@
 package com.estudio.oss_dns_resolver_v1.model;
 
-import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
 public class InitModel implements Serializable {
 
-    @SerializedName("yuming")
     private String yuming = null;
 
-    @SerializedName("ossone")
     private String ossone = null;
 
-    @SerializedName("osstwo")
     private String osstwo = null;
 
-    @SerializedName("osshaiwai")
     private String osshaiwai = null;
 
-    @SerializedName("ossgit")
     private String ossgit = null;
 
-    @SerializedName("ossthree")
     private String ossthree = null;
 
-    @SerializedName("defaulturl")
     private String defaulturl = null;
 
-    @SerializedName("defaultoss")
     private String defaultoss = null;
 
 

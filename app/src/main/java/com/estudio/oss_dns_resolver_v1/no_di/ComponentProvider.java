@@ -11,7 +11,7 @@ import com.estudio.oss_dns_resolver_v1.data.logic.oss.EncryptedOSSLogic;
 import com.estudio.oss_dns_resolver_v1.data.logic.yuming.BasicYuming;
 import com.estudio.oss_dns_resolver_v1.data.logic.yuming.EncryptedYuming;
 import com.estudio.oss_dns_resolver_v1.data.repository.MainRepositoryImpl;
-import com.estudio.oss_dns_resolver_v1.data.utils.ApiRawCall;
+import com.estudio.oss_dns_resolver_v1.data.utils.SharePrefManager;
 import com.estudio.oss_dns_resolver_v1.domain.repository.MainRepository;
 
 public class ComponentProvider {
@@ -19,15 +19,12 @@ public class ComponentProvider {
     private static DNSResolver dnsResolver;
     private static SharedPreferences sharedPreferences;
     private static ComponentProvider instance;
-    private static ApiService apiService;
 
 
     public static ComponentProvider getInstance(
-            ApiService service,
             DNSResolver resolver ,
             SharedPreferences preferences
     ) {
-        apiService = service;
         dnsResolver = resolver;
         sharedPreferences = preferences;
 
@@ -38,27 +35,27 @@ public class ComponentProvider {
     }
 
     public EncryptedOSSLogic provideEncryptedOSSLogic() {
-        return EncryptedOSSLogic.getInstance(dnsResolver ,provideApiRawCall(), sharedPreferences);
+        return EncryptedOSSLogic.getInstance(dnsResolver, sharedPreferences);
     }
 
     public BasicOSSLogic provideBasicOSSLogic(){
-        return BasicOSSLogic.getInstance(provideApiRawCall(), sharedPreferences);
+        return BasicOSSLogic.getInstance(sharedPreferences);
     }
 
     public EncryptedYuming provideEncryptedYuming() {
-        return EncryptedYuming.getInstance(dnsResolver, provideApiRawCall(), sharedPreferences);
+        return EncryptedYuming.getInstance(dnsResolver, sharedPreferences);
     }
 
     public BasicYuming provideBasicYuming(){
-        return BasicYuming.getInstance(provideApiRawCall(), sharedPreferences);
+        return BasicYuming.getInstance(sharedPreferences);
     }
 
     public EncryptedDefaultURL provideEncryptedDefaultURL() {
-        return EncryptedDefaultURL.getInstance(dnsResolver, provideApiRawCall(), sharedPreferences);
+        return EncryptedDefaultURL.getInstance(dnsResolver, sharedPreferences);
     }
 
     public BasicDefaultURL provideBasicDefaultURL() {
-        return BasicDefaultURL.getInstance(provideApiRawCall(), sharedPreferences);
+        return BasicDefaultURL.getInstance(sharedPreferences);
     }
 
     public CoreLogic provideCoreLogic() {
@@ -70,11 +67,8 @@ public class ComponentProvider {
                 provideBasicYuming(),
                 provideEncryptedDefaultURL(),
                 provideBasicDefaultURL()
-        );
-    }
 
-    public ApiRawCall provideApiRawCall() {
-        return ApiRawCall.getInstance(apiService, sharedPreferences);
+        );
     }
 
     public MainRepository provideMainRepository(

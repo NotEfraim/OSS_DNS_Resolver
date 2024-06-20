@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.estudio.oss_dns_resolver_v1.data.utils.SharePrefManager;
 import com.estudio.oss_dns_resolver_v1.utils.Constants;
 import com.estudio.oss_dns_resolver_v1.utils.Utils;
 import com.tencent.msdk.dns.DnsConfig;
@@ -16,9 +17,10 @@ public class DNSResolver {
     private DNSResolver(){}
 
     public static DNSResolver getInstance(SharedPreferences sharedPreferences, Context context){
+        SharePrefManager sharePrefManager = new SharePrefManager(sharedPreferences);
 
-        String dnsID = sharedPreferences.getString(Constants.DNS_ID_KEY, "");
-        String dnsKey = sharedPreferences.getString(Constants.DNS_KEY, "");
+        String dnsID = sharePrefManager.GET_DNS_ID();
+        String dnsKey = sharePrefManager.GET_DNS_KEY();
 
         if(dnsID.isEmpty() || dnsKey.isEmpty()){
             Log.d(TAG, "Method Name : DNSResolver -> Dns id or Dns key is empty");

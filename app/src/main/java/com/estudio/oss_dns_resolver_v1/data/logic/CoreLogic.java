@@ -12,10 +12,12 @@ import com.estudio.oss_dns_resolver_v1.data.logic.oss.BasicOSSLogic;
 import com.estudio.oss_dns_resolver_v1.data.logic.oss.EncryptedOSSLogic;
 import com.estudio.oss_dns_resolver_v1.data.logic.yuming.BasicYuming;
 import com.estudio.oss_dns_resolver_v1.data.logic.yuming.EncryptedYuming;
+import com.estudio.oss_dns_resolver_v1.data.utils.SharePrefManager;
 import com.estudio.oss_dns_resolver_v1.model.KConfiguration;
 import com.estudio.oss_dns_resolver_v1.model.OSSResponse;
 import com.estudio.oss_dns_resolver_v1.model.YumingResponse;
 import com.estudio.oss_dns_resolver_v1.utils.Constants;
+import com.estudio.oss_dns_resolver_v1.utils.KEventListener;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -32,6 +34,8 @@ public class CoreLogic {
     private String defaultUrl = "";
     private static SharedPreferences sharedPreferences;
     private static CoreLogic instance;
+    private static KEventListener kEventListener;
+    private static SharePrefManager sharePrefManager;
 
 
     /** Logic Managers */
@@ -80,6 +84,7 @@ public class CoreLogic {
         liveDataBasicDefaultURL = basicDefaultURL.response;
 
         if (instance == null) {
+            sharePrefManager = new SharePrefManager(sharedPreferences);
             instance = new CoreLogic();
         }
 
@@ -92,10 +97,15 @@ public class CoreLogic {
         this.yumingList = configuration.getYumingList();
         this.defaultUrl = configuration.getDefaultUrl();
         this.lifecycleOwner = configuration.getLifecycleOwner();
+        kEventListener = configuration.getKEventListener();
 
         /* Set DNS Key and ID */
-        sharedPreferences.edit().putString(Constants.DNS_KEY, configuration.getDnsKey()).apply();
-        sharedPreferences.edit().putString(Constants.DNS_ID_KEY, configuration.getDnsId()).apply();
+        sharePrefManager.SET_DNS_ID(configuration.getDnsId());
+        sharePrefManager.SET_DNS_KEY(configuration.getDnsKey());
+
+        /* Set AGENT Key and VERSION */
+        sharePrefManager.SET_AGENT(configuration.getAgent());
+        sharePrefManager.SET_VERSION(configuration.getVersion());
     }
     public void setOssList(List<String> ossList){
         this.ossList = ossList;
@@ -124,6 +134,9 @@ public class CoreLogic {
             /* Get the response */
             if(response.isSuccess()){
 
+                /* OSS Success */
+                kEventListener.onOSSSuccess(response);
+
                 /* Get the yuming list */
                 yumingList = Arrays.asList(response.getData().getYuming().split(","));
 
@@ -133,7 +146,6 @@ public class CoreLogic {
 
                 /* If the response is not success, use basic */
                 USE_BASIC_OSS();
-
             }
         });
     }
@@ -149,6 +161,9 @@ public class CoreLogic {
 
             /* Get the response */
             if(response.isSuccess()){
+
+                /* OSS Success */
+                kEventListener.onOSSSuccess(response);
 
                 /* Get the yuming list */
                 yumingList = Arrays.asList(response.getData().getYuming().split(","));
@@ -176,8 +191,8 @@ public class CoreLogic {
 
             /* Get the response */
             if(response.isSuccess()){
-
-                //  Todo save the final url and pass response
+                /* Yuming Success */
+                kEventListener.onYumingSuccess(response);
                 Log.d(TAG, "Final URL: " + response.getFinalUrl());
 
             } else {
@@ -197,7 +212,8 @@ public class CoreLogic {
 
             /* Get the response */
             if(response.isSuccess()){
-                //  Todo save the final url and pass response
+                /* Yuming Success */
+                kEventListener.onYumingSuccess(response);
             } else {
 
                 /* If the basic yuming response is not success, use default url */
@@ -217,7 +233,8 @@ public class CoreLogic {
 
             /* Get the response */
             if(response.isSuccess()){
-                // Todo save the final url and pass response
+                /* Yuming Success */
+                kEventListener.onYumingSuccess(response);
             } else {
 
                 /* If the encrypted default url response is not success, use basic default url */
@@ -237,9 +254,10 @@ public class CoreLogic {
 
             /* Get the response */
             if(response.isSuccess()){
-                // Todo save the final url and pass response
+                /* Yuming Success */
+                kEventListener.onYumingSuccess(response);
             } else {
-                // Todo show error
+                kEventListener.onAllFailed();
             }
         });
     }

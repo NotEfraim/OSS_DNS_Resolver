@@ -9,31 +9,26 @@ import androidx.lifecycle.MutableLiveData;
 import com.estudio.oss_dns_resolver_v1.data.logic.CoreLogic;
 import com.estudio.oss_dns_resolver_v1.data.logic.dns.DNSResolver;
 import com.estudio.oss_dns_resolver_v1.data.logic.dns.DnsCallback;
-import com.estudio.oss_dns_resolver_v1.data.utils.ApiRawCall;
-import com.estudio.oss_dns_resolver_v1.data.utils.BaseApiObserver;
 import com.estudio.oss_dns_resolver_v1.data.utils.Process_Enum;
+import com.estudio.oss_dns_resolver_v1.data.utils.SharePrefManager;
 import com.estudio.oss_dns_resolver_v1.model.InitActModel;
 import com.estudio.oss_dns_resolver_v1.model.YumingResponse;
+import com.estudio.oss_dns_resolver_v1.no_di.network.HttpService;
+import com.estudio.oss_dns_resolver_v1.no_di.network.HttpServiceBuilder;
+import com.estudio.oss_dns_resolver_v1.no_di.network.ServiceCallBack;
 import com.estudio.oss_dns_resolver_v1.utils.Constants;
 import com.estudio.oss_dns_resolver_v1.utils.Utils;
 import com.google.gson.Gson;
 
-import java.net.HttpURLConnection;
 import java.util.Collections;
 import java.util.List;
-
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class EncryptedYuming {
 
     private static final String TAG = CoreLogic.TAG;
     private static DNSResolver dnsResolver;
-    private static ApiRawCall apiRawCall;
-    private static SharedPreferences sharedPreferences;
+    private static SharePrefManager sharePrefManager;
     private static EncryptedYuming instance;
-
-    Gson gson = new Gson();
     private List<String> yumingList = Collections.emptyList();
     private static int LIST_SIZE = 0;
     private String current_url = "";
@@ -49,12 +44,10 @@ public class EncryptedYuming {
 
     public static EncryptedYuming getInstance(
             DNSResolver resolver,
-            ApiRawCall rawCall,
             SharedPreferences preferences
     ){
         dnsResolver = resolver;
-        apiRawCall = rawCall;
-        sharedPreferences = preferences;
+        sharePrefManager = new SharePrefManager(preferences);
 
         if(instance == null){
             instance = new EncryptedYuming();
@@ -70,12 +63,6 @@ public class EncryptedYuming {
 
         PHASE_1_COUNTER = 0;
         LIST_SIZE = yumingList.size();
-
-        /* Set Status */
-        sharedPreferences.edit().putString(Constants.PROCESS_KEY, Process_Enum.YUMING_PROCESS.name()).apply();
-
-        /* Reset DNS Header */
-        sharedPreferences.edit().putString(Constants.OSS_HEADER_HOST, "").apply();
 
         /* Phase 1 Start */
         Phase1_ENCRYPT_THE_YUMING();
@@ -105,12 +92,6 @@ public class EncryptedYuming {
                         "\nOLD URL: "+ current_url+
                         "\nEncrypted URL: "+result);
 
-                /* Add DNS Header */
-                sharedPreferences.edit().putString(Constants.OSS_HEADER_HOST, Utils.getURLHost(current_url)).apply();
-
-                /* Add BASE URL */
-                sharedPreferences.edit().putString(Constants.BASE_URL_KEY, result).apply();
-
                 /* Call the encrypted OSS */
                 Phase2_TEST_YUMING(result);
 
@@ -132,42 +113,51 @@ public class EncryptedYuming {
 
     private void Phase2_TEST_YUMING(String encryptionResult) {
 
-        apiRawCall.initAct(encryptionResult)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new BaseApiObserver<InitActModel>() {
+        StringBuilder hostHeader = new StringBuilder();
+        hostHeader.append(Utils.getURLHost(current_url));
+        int port = Utils.getURLPort(current_url);
 
-                    @Override
-                    public void onNext(InitActModel initActModel) {
+        if(port != 80) {
+            hostHeader.append(":");
+            hostHeader.append(port);
+        }
 
-                        Log.d(TAG, "==== YUMING CALL Success! ==== \nResponse:" + gson.toJson(initActModel));
+        HttpServiceBuilder builder = new HttpServiceBuilder.Builder()
+                .setURL(encryptionResult+"/platform-ns/v1.0/init")
+                .setMethod("POST")
+                .addHeader("dev", "2")
+                .addHeader("agent", sharePrefManager.GET_AGENT())
+                .addHeader("version", sharePrefManager.GET_VERSION())
+                .addHeader("host", hostHeader.toString())
+                .build();
 
-                        if(initActModel.getCode() == HttpURLConnection.HTTP_OK || initActModel.getCode() == 0) {
-                            yumingResponse.setFinalUrl(encryptionResult);
-                            yumingResponse.setSuccess(true);
-                            yumingResponse.setData(initActModel);
-                            _response.postValue(yumingResponse);
-                            /* Exit the recursion */
-                            PHASE_1_COUNTER = LIST_SIZE;
-                        } else {
-                            /* Increase the counter */
-                            PHASE_1_COUNTER++;
-                            /* Recursive call */
-                            Phase1_ENCRYPT_THE_YUMING();
-                        }
+        new HttpService(builder, new ServiceCallBack() {
+            @Override
+            public void onResponse(String response) {
+                /* Save Success Yuming */
+                sharePrefManager.SET_RESOLVED_YUMING(encryptionResult);
 
-                    }
+                Log.d(TAG, "==== YUMING CALL Success! ==== \nResponse:" + new Gson().toJson(response));
+                InitActModel initActModel = new Gson().fromJson(response, InitActModel.class);
+                yumingResponse.setFinalUrl(encryptionResult);
+                yumingResponse.setSuccess(true);
+                yumingResponse.setData(initActModel);
+                _response.postValue(yumingResponse);
+                /* Exit the recursion */
+                PHASE_1_COUNTER = LIST_SIZE;
+            }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.d(TAG, "==== YUMING CALL ERROR ! ==== \nResponse:" + e.getLocalizedMessage());
-                        /* Increase the counter */
-                        PHASE_1_COUNTER++;
-                        /* Recursive call */
-                        Phase1_ENCRYPT_THE_YUMING();
-                    }
+            @Override
+            public void onFailure(String error) {
+                Log.d(TAG, "==== YUMING CALL ERROR ! ==== \nResponse:" + error);
+                /* Increase the counter */
+                PHASE_1_COUNTER++;
+                /* Recursive call */
+                Phase1_ENCRYPT_THE_YUMING();
+            }
 
-                });
+        });
+
     }
 
 }

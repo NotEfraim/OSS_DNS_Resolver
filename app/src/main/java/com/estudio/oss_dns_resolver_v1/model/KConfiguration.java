@@ -4,17 +4,17 @@ import androidx.lifecycle.LifecycleOwner;
 
 import com.estudio.oss_dns_resolver_v1.utils.KEventListener;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
-import kotlinx.serialization.Serializable;
-
-@Serializable
-public class KConfiguration {
+public class KConfiguration implements Serializable {
 
     // Fields
     private String dnsKey = "";
     private String dnsId = "";
+    private String agent = "";
+    private String version = "";
     private String defaultUrl = "";
     private List<String> ossList = Collections.emptyList();
     private List<String> yumingList = Collections.emptyList();
@@ -32,6 +32,14 @@ public class KConfiguration {
 
     public String getDefaultUrl() {
         return defaultUrl;
+    }
+
+    public String getAgent() {
+        return agent;
+    }
+
+    public String getVersion() {
+        return version;
     }
 
     public List<String> getOssList() {
@@ -58,12 +66,16 @@ public class KConfiguration {
         this.yumingList = builder.yumingList;
         this.lifecycleOwner = builder.lifecycleOwner;
         this.kEventListener = builder.kEventListener;
+        this.agent = builder.agent;
+        this.version = builder.version;
 
     }
 
     public static class Builder {
         private String dnsKey = "";
         private String dnsId = "";
+        private String agent = "";
+        private String version = "";
         private String defaultUrl = "";
         private List<String> ossList = Collections.emptyList();
         private List<String> yumingList = Collections.emptyList();
@@ -77,6 +89,16 @@ public class KConfiguration {
 
         public Builder dnsKey(String dnsKey) {
             this.dnsKey = dnsKey;
+            return this;
+        }
+
+        public Builder agent(String agent) {
+            this.agent = agent;
+            return this;
+        }
+
+        public Builder version(String version) {
+            this.version = version;
             return this;
         }
 

@@ -1,14 +1,11 @@
 package com.estudio.oss_dns_resolver_v1.model;
 
 
-import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
 public class BaseModel implements Serializable {
-    @SerializedName("code")
     private int code;
-    @SerializedName("msg")
     private String msg;
 
     public int getCode() {

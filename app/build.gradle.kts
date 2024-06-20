@@ -43,11 +43,11 @@ android {
         }
     }
 
-    java {
-        toolchain {
-            languageVersion = JavaLanguageVersion.of(18)
-        }
-    }
+//    java {
+//        toolchain {
+//            languageVersion = JavaLanguageVersion.of(18)
+//        }
+//    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -68,14 +68,14 @@ android {
         }
     }
 
-    libraryVariants.all {
-        val variant = this
-        variant.outputs
-            .map { it as BaseVariantOutputImpl }
-            .forEach { output ->
-                output.outputFileName = "oss_dns_resolver.aar"
-            }
-    }
+//    libraryVariants.all {
+//        val variant = this
+//        variant.outputs
+//            .map { it as BaseVariantOutputImpl }
+//            .forEach { output ->
+//                output.outputFileName = "oss_dns_resolver.aar"
+//            }
+//    }
 
 }
 
@@ -96,20 +96,21 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    testImplementation("androidx.test:runner:1.5.2")
 
     // Dependencies
     implementation(libs.google.gson)
-    implementation(libs.retrofit)
-    implementation(libs.oktHttp)
+//    implementation(libs.retrofit)
+//    implementation(libs.oktHttp)
 //    implementation(libs.oktHttpInterceptor)
-    implementation(libs.retrofit.gson)
-    implementation(libs.kotlin.serializable)
+//    implementation(libs.retrofit.gson)
+//    implementation(libs.kotlin.serializable)
 //    implementation(files("aar/HTTPDNS_Android_v4.9.0a_release.aar"))
 
     // RX Java
-    implementation(libs.rxjava)
-    implementation(libs.rx.android)
-    implementation(libs.retrofit.rxjava.converter)
+//    implementation(libs.rxjava)
+//    implementation(libs.rx.android)
+//    implementation(libs.retrofit.rxjava.converter)
     // DNS
     implementation(project(":aar", configuration = "dnsProvider"))
 

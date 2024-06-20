@@ -1,14 +1,12 @@
 package com.estudio.oss_dns_resolver_v1.utils;
 
 public class Constants {
-    public static final String BASE_URL_KEY = "BASE_URL";
-    public static final String OSS_URL_KEY = "OSS_URL_KEY";
-    public static final String OSS_LIST_KEY = "OSS_LIST_KEY";
-    public static final String PROCESS_KEY = "PROCESS_KEY";
-    public static final String YUMING_URL_KEY = "YUMING_URL_KEY";
     public static final String DNS_KEY = "DNS_KEY";
     public static final String DNS_ID_KEY = "DNS_ID_KEY";
-    public static final String OSS_HEADER_HOST = "OSS_HEADER_HOST";
+    public static final String AGENT_KEY = "AGENT_KEY";
+    public static final String VERSION_KEY = "VERSION_KEY";
+    public static final String YUMING_KEY = "YUMING_KEY";
+    public static final String OSS_KEY = "OSS_KEY";
 
     public static String privateKey = "MIIJQwIBADANBgkqhkiG9w0BAQEFAASCCS0wggkpAgEAAoICAQCpoIF0AkP2h8PY" +
             "fmP5XZJLK6v66kyQFplpMFsiV44BhcKi6+XZF+b2+r0EUJ2+BVI45L+etWbKy9Pe" +
